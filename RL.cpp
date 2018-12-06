@@ -1,46 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <stdlib.h>
-#include <random>
-#include <set>
-#include <iterator>
-#include <functional>
-#include <algorithm>
-#include <initializer_list>
-
-struct portfolioData
-{
-    double netWorth=100000000;
-    double liquid=100000000;
-    double profits;
-    std::multiset <int, std::less <int> > positions;
-};
-
-struct RLdata
-{
-  const double alpha = 0.1;
-  const double gamma = 0.95;
-  int count = 0;
-  int action; //0  = BUY, 1 = SELL, 2 = HOLD
-  std::vector<std::string> dates;
-  std::vector<double> prices;
-  std::vector<double> Qbuy;
-  std::vector<double> Qsell;
-  std::vector<double> Qhold;
-  std::vector<double> reward;
-
-};
-
-double getFutureReward(const RLdata &, const portfolioData &);
-void sell(portfolioData &, RLdata &);
-void buy(portfolioData &, RLdata &);
-void epsilon_greedy(RLdata &, const portfolioData &);
-double random_double();
-int random_bool();
-void get_CSV_data(std::vector<std::string> &, std::vector<double> &);
-
-
+#include "RL.h"
 
 int main()
 {
@@ -54,7 +12,8 @@ int main()
 
     //Start the RL by choosing an action
     epsilon_greedy(RL, portfolio);
-    //std::cout<<RL.action << std::endl;
+    if(RL.action !=2)
+      std::cout<<RL.action << std::endl;
     //Execute chosen action
 
     //Hold
@@ -117,8 +76,6 @@ int main()
     }
     RL.count++;
   }//End loop
-  for(int k = 0; k <RL.Qsell.size(); k++)
-    std::cout<< std::endl << std::endl << RL.Qsell[k];
 
   std::cout<< std::endl << std::endl << "DONE: " << portfolio.profits <<
   std::endl<< std::endl;
@@ -178,8 +135,6 @@ void sell(portfolioData &env, RLdata &RL)
     RL.reward.push_back(-1);
   else
     RL.reward.push_back(0);
-
-  //std::cout << "Sell profits: " << tempProfit << std::endl;
 }
 
 void buy(portfolioData &env, RLdata &RL)
@@ -188,8 +143,6 @@ void buy(portfolioData &env, RLdata &RL)
   env.positions.insert(RL.prices[RL.count]);
   env.liquid = env.liquid - RL.prices[RL.count];
   env.netWorth = env.liquid + (env.positions.size() * RL.prices[RL.count]);
-
-  //std::cout<<"Buy: " << RL.prices[RL.count] << std::endl;
 }
 
 void epsilon_greedy(RLdata &RL, const portfolioData &env)
