@@ -11,8 +11,8 @@
 
 struct portfolioData
 {
-    double netWorth=1000000;
-    double liquid=1000000;
+    double netWorth=10000;
+    double liquid=10000;
     double profits;
     std::multiset <int, std::less <int> > positions;
 };
